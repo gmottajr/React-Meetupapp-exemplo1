@@ -1,6 +1,5 @@
 import MeetupList from "../components/meetups/MeetupList";
 import {useState, useEffect} from 'react';
-import MeetupItem from "../components/meetups/MeetupItem";
 
 function AllMeetupsPage() {
 
