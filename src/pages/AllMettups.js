@@ -1,32 +1,48 @@
 import MeetupList from "../components/meetups/MeetupList";
-
-const DUMMY_DATA = [
-    {
-      id: 'm1',
-      title: 'This is a first meetup',
-      image:
-        'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Stadtbild_M%C3%BCnchen.jpg/2560px-Stadtbild_M%C3%BCnchen.jpg',
-      address: 'Meetupstreet 5, 12345 Meetup City',
-      description:
-        'This is a first, amazing meetup which you definitely should not miss. It will be a lot of fun!',
-    },
-    {
-      id: 'm2',
-      title: 'This is a second meetup',
-      image:
-        'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Stadtbild_M%C3%BCnchen.jpg/2560px-Stadtbild_M%C3%BCnchen.jpg',
-      address: 'Meetupstreet 5, 12345 Meetup City',
-      description:
-        'This is a first, amazing meetup which you definitely should not miss. It will be a lot of fun!',
-    },
-  ];
-  
+import {useState, useEffect} from 'react';
+import MeetupItem from "../components/meetups/MeetupItem";
 
 function AllMeetupsPage() {
+
+    const [isLoading, setIsLoading] = useState(true);
+    const [loadedMeetups, setLoadedMeetups] = useState([]);
+
+    const auxUrl = 'https://react-getting-started-56fbe-default-rtdb.firebaseio.com/meetups.json';
+    
+    useEffect( () => {
+        setIsLoading(true);
+        fetch(auxUrl)
+        .then(response => {
+            return response.json();
+        })
+        .then(data => {
+            const meetupList = [];
+            for (const key in data)
+            {
+                const meetupItem = {
+                    id: key,
+                    ...data[key]
+                }
+
+                meetupList.push(meetupItem);
+            }
+            setIsLoading(false);
+            setLoadedMeetups(meetupList);
+        });
+    }, []);
+    
+    if (isLoading)
+    {
+        return (
+            <section>
+                <p>Loading data ....</p>
+            </section>
+        );
+    }
     return (
         <div>
             <h1>All Meetups</h1>
-            <MeetupList meetups={DUMMY_DATA}/>
+            <MeetupList meetups={loadedMeetups}/>
         </div>
     );
 }
